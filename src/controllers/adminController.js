@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 
-const createToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET);
+const createToken = (email) => {
+  return jwt.sign({ email }, process.env.JWT_SECRET);
 };
 
 export const adminLogin = async (req, res) => {
