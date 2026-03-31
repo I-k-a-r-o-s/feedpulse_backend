@@ -4,12 +4,14 @@ import express from "express";
 import cors from "cors";
 import { connectMongoDB } from "./config/mongodb.js";
 import adminRouter from "./routes/adminRoutes.js";
+import feedbackRouter from "./routes/feedbackRoutes.js";
 
 const server = express();
 server.use(express.json());
 server.use(cors());
 
 server.use("/api/auth/",adminRouter)//admin router
+server.use("/api/feedback",feedbackRouter)
 
 const port = process.env.PORT;
 const startServer = async () => {
