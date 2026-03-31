@@ -1,4 +1,5 @@
 import FeedbackModel from "../models/feedbackModel.js";
+import validator from "validator";
 
 export const addFeedback = async (req, res) => {
   try {
@@ -8,6 +9,12 @@ export const addFeedback = async (req, res) => {
       return res.status(400).json({
         success: false,
         message: "Please provide all required fields!",
+      });
+    }
+    if (!validator.isEmail(submitterEmail)) {
+      return res.status(400).json({
+        success: false,
+        message: "Please Enter a Valid Email!",
       });
     }
 
