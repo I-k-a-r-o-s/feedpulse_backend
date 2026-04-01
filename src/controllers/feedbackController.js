@@ -14,7 +14,7 @@ export const addFeedback = async (req, res) => {
     if (!validator.isEmail(submitterEmail)) {
       return res.status(400).json({
         success: false,
-        message: "Please Enter a Valid Email!",
+        message: "Please enter a valid email!",
       });
     }
 
@@ -38,3 +38,52 @@ export const addFeedback = async (req, res) => {
     });
   }
 };
+
+export const getAllFeedback = async (req, res) => {
+  try {
+    const allFeedback = await FeedbackModel.find();
+    if (!allFeedback || allFeedback.length === 0) {
+      return res.status(204).json({
+        success: false,
+        message: "Database is empty!",
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      data: allFeedback,
+    });
+  } catch (error) {
+    console.error("Error in getAllFeedback!:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
+export const getOneFeedback = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const feedback = await FeedbackModel.findById(id);
+    if (!feedback) {
+      return res.status(404).json({
+        success: false,
+        message: "Feedback not found!",
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      message: "Feedback retrieved successfully!",
+      feedback,
+    });
+  } catch (error) {
+    console.error("Error in getOneFeedback!:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+export const updateFeedback = async (req, res) => {};
+export const deleteFeedback = async (req, res) => {};
