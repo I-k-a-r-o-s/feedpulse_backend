@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import { isEmail } from "validator";
 
 const feedbackSchema = new mongoose.Schema(
   {
@@ -37,20 +36,19 @@ const feedbackSchema = new mongoose.Schema(
       trim: true,
       lowercase: true,
       default: "",
-      validate: [isEmail(), "Invalid Email"],
     },
 
     // AI fields
     ai_category: {
       type: String,
       enum: ["Bug", "Feature Request", "Improvement", "Other"],
-      default: "",
+      default: null,
       index: true,
     },
     ai_sentiment: {
       type: String,
       enum: ["Positive", "Neutral", "Negative"],
-      default: "",
+      default: null,
     },
     ai_priority: {
       type: Number,
