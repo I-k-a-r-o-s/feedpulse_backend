@@ -85,5 +85,48 @@ export const getOneFeedback = async (req, res) => {
     });
   }
 };
-export const updateFeedback = async (req, res) => {};
+
+export const updateFeedbackStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    if (!status) {
+      return res.status(400).json({
+        success: false,
+        message: "Status not found!",
+      });
+    }
+
+    const validStatuses = ["New", "In Review", "Resolved"];
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: `Invalid status! Allowed values: ${validStatuses.join(", ")}`,
+      });
+    }
+
+    const feedback = await FeedbackModel.findById(id);
+    if (!feedback) {
+      return res.status(404).json({
+        success: false,
+        message: "Feedback not found!",
+      });
+    }
+
+    feedback.status = status;
+    await feedback.save();
+    return res.status(200).json({
+      success: true,
+      message: "Status updated successfully!",
+      feedback,
+    });
+  } catch (error) {
+    console.error("Error in updateFeedbackStatus!:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
 export const deleteFeedback = async (req, res) => {};
