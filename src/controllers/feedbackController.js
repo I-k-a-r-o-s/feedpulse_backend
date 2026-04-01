@@ -129,4 +129,27 @@ export const updateFeedbackStatus = async (req, res) => {
     });
   }
 };
-export const deleteFeedback = async (req, res) => {};
+
+export const deleteFeedback = async (req, res) => {
+  try {
+    const {id}=req.params
+
+    const feedback=await FeedbackModel.findByIdAndDelete(id)
+    if(!feedback){
+      return res.status(404).json({
+        success: false,
+        message: "Feedback not found!",
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      message: "Feedback deleted successfully!",
+    });
+  } catch (error) {
+    console.error("Error in deleteFeedback!:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
