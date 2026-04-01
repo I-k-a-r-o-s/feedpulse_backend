@@ -132,10 +132,10 @@ export const updateFeedbackStatus = async (req, res) => {
 
 export const deleteFeedback = async (req, res) => {
   try {
-    const {id}=req.params
+    const { id } = req.params;
 
-    const feedback=await FeedbackModel.findByIdAndDelete(id)
-    if(!feedback){
+    const feedback = await FeedbackModel.findByIdAndDelete(id);
+    if (!feedback) {
       return res.status(404).json({
         success: false,
         message: "Feedback not found!",
