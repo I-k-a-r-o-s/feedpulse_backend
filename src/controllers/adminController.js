@@ -51,8 +51,8 @@ export const verifyAdminToken = (req, res, next) => {
       });
     }
 
-    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-      if (err) {
+    jwt.verify(token, process.env.JWT_SECRET, (error, decoded) => {
+      if (error) {
         return res.status(401).json({
           success: false,
           message: "Invalid or Expired Token!",
