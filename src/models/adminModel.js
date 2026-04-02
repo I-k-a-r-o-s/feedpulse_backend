@@ -6,7 +6,7 @@ const adminSchema = new mongoose.Schema({
     unique: true,
     required: true,
   },
-  isPassportNumberord: {
+  password: {
     type: String,
     required: true,
   },
