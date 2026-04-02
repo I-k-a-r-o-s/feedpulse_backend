@@ -65,7 +65,8 @@ export const getAllFeedback = async (req, res) => {
     }
     return res.status(200).json({
       success: true,
-      data: allFeedback,
+      message:"All Feedbacks fetched Successfully!",
+      allFeedback,
     });
   } catch (error) {
     console.error("Error in getAllFeedback!:", error);
