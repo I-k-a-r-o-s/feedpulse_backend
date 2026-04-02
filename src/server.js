@@ -5,13 +5,20 @@ import cors from "cors";
 import { connectMongoDB } from "./config/mongodb.js";
 import adminRouter from "./routes/adminRoutes.js";
 import feedbackRouter from "./routes/feedbackRoutes.js";
+import cookieParser from "cookie-parser";
 
 const server = express();
 server.use(express.json());
-server.use(cors());
+server.use(cookieParser());
+server.use(
+  cors({
+    origin: process.env.CORS_ORIGIN,
+    credentials: true,
+  }),
+);
 
 server.use("/api/auth/", adminRouter); //admin router
-server.use("/api/feedback", feedbackRouter);//server router
+server.use("/api/feedback", feedbackRouter); //server router
 
 const port = process.env.PORT;
 const startServer = async () => {

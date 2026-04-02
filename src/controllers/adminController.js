@@ -1,12 +1,33 @@
 import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
+import validator from "validator";
+import AdminModel from "../models/adminModel.js";
 
-const createToken = (email) => {
-  return jwt.sign({ email }, process.env.JWT_SECRET);
+const oneDay = 24 * 60 * 60 * 1000; //1 day in milliseconds
+
+//cookie options for JWT token
+const cookiesOptions = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: "strict",
+  maxAge: oneDay,
 };
 
-export const adminLogin = async (req, res) => {
+//set cookie with JWT token
+const setCookie = (res, token) => {
+  res.cookie("token", token, cookiesOptions);
+};
+
+//generate JWT token and set it in the cookie
+const generateToken = (res, payload) => {
+  const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1d" });
+  setCookie(res, token);
+};
+
+export const adminRegister = async (req, res) => {
   try {
     const { email, password } = req.body;
+
     if (!email || !password) {
       return res.status(400).json({
         success: false,
@@ -14,25 +35,33 @@ export const adminLogin = async (req, res) => {
       });
     }
 
-    if (
-      email !== process.env.ADMIN_EMAIL ||
-      password !== process.env.ADMIN_PASSWORD
-    ) {
-      return res.status(401).json({
+    if (!validator.isEmail(email)) {
+      return res.status(409).json({
         success: false,
-        message: "Invalid Credentials!",
+        message: "Invalid Email Format!",
       });
     }
 
-    // Generate and send JWT token to frontend
-    const token = createToken(email);
-    return res.status(200).json({
+    const checkExisting = await AdminModel.findOne({ email });
+    if (checkExisting) {
+      return res.status(409).json({
+        success: false,
+        message: "Admin Already Exists!",
+      });
+    }
+
+    //hash the password before saving to database
+    const passwordHash = await bcrypt.hash(password, 10);
+    await AdminModel.create({
+      email,
+      password: passwordHash,
+    });
+    return res.status(201).json({
       success: true,
-      message: "Admin Login Successful!",
-      token,
+      message: "Admin Registered Successfully!",
     });
   } catch (error) {
-    console.log("Error in adminLogin!:", error);
+    console.log("Error in adminRegister:", error);
     return res.status(500).json({
       success: false,
       message: "Internal Server Error!",
@@ -40,29 +69,66 @@ export const adminLogin = async (req, res) => {
   }
 };
 
-export const verifyAdminToken = (req, res, next) => {
+export const adminLogin = async (req, res) => {
   try {
-    const token = req.headers.authorization?.split(" ")[1];
+    const { email, password } = req.body;
 
-    if (!token) {
-      return res.status(401).json({
+    if (!email || !password) {
+      return res.status(400).json({
         success: false,
-        message: "No Token Provided!",
+        message: "Please Provide All Fields!",
       });
     }
 
-    jwt.verify(token, process.env.JWT_SECRET, (error, decoded) => {
-      if (error) {
-        return res.status(401).json({
-          success: false,
-          message: "Invalid or Expired Token!",
-        });
-      }
-      req.admin = decoded;
-      next();
+    if (!validator.isEmail(email)) {
+      return res.status(409).json({
+        success: false,
+        message: "Invalid Email Format!",
+      });
+    }
+
+    const admin = await AdminModel.findOne({ email });
+    if (!admin) {
+      return res.status(404).json({
+        success: false,
+        message: "Invalid Credentials!",
+      });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, admin.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid Credentials!",
+      });
+    }
+
+    generateToken(res, { id: admin._id });
+    return res.status(200).json({
+      success: true,
+      message: "Admn Logged In Successfully!",
+      admin: {
+        email: admin.email,
+      },
     });
   } catch (error) {
-    console.log("Error in verifyAdminToken!:", error);
+    console.log("Error in adminLogin:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error!",
+    });
+  }
+};
+
+export const adminLogOut = async (req, res) => {
+  try {
+    res.clearCookie("token", cookiesOptions);
+    return res.status(200).json({
+      success: true,
+      message: "Admin Logged Out Successfully!",
+    });
+  } catch (error) {
+    console.log("Error in adminLogout:", error);
     return res.status(500).json({
       success: false,
       message: "Internal Server Error!",
