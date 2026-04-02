@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import validator from "validator";
 import AdminModel from "../models/adminModel.js";
 
 export const adminRegister = async (req, res) => {
@@ -10,6 +11,13 @@ export const adminRegister = async (req, res) => {
       return res.status(400).json({
         success: false,
         message: "Please Provide All Fields!",
+      });
+    }
+
+    if (!validator.isEmail(email)) {
+      return res.status(409).json({
+        success: false,
+        message: "Invalid Email Format!",
       });
     }
 
@@ -40,6 +48,10 @@ export const adminRegister = async (req, res) => {
   }
 };
 
+export const adminLogin = async (req, res) => {
+  try {
+  } catch (error) {}
+};
 {
   /**export const adminLogin = async (req, res) => {
   try {
