@@ -1,10 +1,47 @@
 import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
+import AdminModel from "../models/adminModel.js";
 
-const createToken = (email) => {
-  return jwt.sign({ email }, process.env.JWT_SECRET);
+export const adminRegister = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Please Provide All Fields!",
+      });
+    }
+
+    const checkExisting = await AdminModel.findOne({ email });
+    if (checkExisting) {
+      return res.status(409).json({
+        success: false,
+        message: "Admin Already Exists!",
+      });
+    }
+
+    //hash the password before saving to database
+    const passwordHash = await bcrypt.hash(password, 10);
+    await AdminModel.create({
+      email,
+      password: passwordHash,
+    });
+    return res.status(201).json({
+      success: true,
+      message: "Admin Registered Successfully!",
+    });
+  } catch (error) {
+    console.log("Error in adminRegister:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error!",
+    });
+  }
 };
 
-export const adminLogin = async (req, res) => {
+{
+  /**export const adminLogin = async (req, res) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
@@ -68,4 +105,5 @@ export const verifyAdminToken = (req, res, next) => {
       message: "Internal Server Error!",
     });
   }
-};
+}; */
+}
