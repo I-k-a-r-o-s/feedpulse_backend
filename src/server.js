@@ -10,8 +10,8 @@ const server = express();
 server.use(express.json());
 server.use(cors());
 
-server.use("/api/auth/",adminRouter)//admin router
-server.use("/api/feedback",feedbackRouter)
+server.use("/api/auth/", adminRouter); //admin router
+server.use("/api/feedback", feedbackRouter);//server router
 
 const port = process.env.PORT;
 const startServer = async () => {
