@@ -6,13 +6,13 @@ import {
   getOneFeedback,
   updateFeedbackStatus,
 } from "../controllers/feedbackController.js";
-import { verifyAdminToken } from "../controllers/adminController.js";
+import { protectedRoute } from "../middleware/authMiddleware.js";
 const feedbackRouter = Router();
 
 feedbackRouter.post("/", addFeedback);
-feedbackRouter.get("/", verifyAdminToken, getAllFeedback);
+feedbackRouter.get("/", protectedRoute, getAllFeedback);
 feedbackRouter.get("/:id", getOneFeedback);
-feedbackRouter.patch("/:id", verifyAdminToken, updateFeedbackStatus);
-feedbackRouter.delete("/:id", verifyAdminToken, deleteFeedback);
+feedbackRouter.patch("/:id", protectedRoute, updateFeedbackStatus);
+feedbackRouter.delete("/:id", protectedRoute, deleteFeedback);
 
 export default feedbackRouter;
