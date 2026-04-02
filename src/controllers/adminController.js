@@ -15,8 +15,8 @@ export const adminLogin = async (req, res) => {
     }
 
     if (
-      email != process.env.ADMIN_EMAIL ||
-      password != process.env.ADMIN_PASSWORD
+      email !== process.env.ADMIN_EMAIL ||
+      password !== process.env.ADMIN_PASSWORD
     ) {
       return res.status(401).json({
         success: false,
