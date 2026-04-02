@@ -1,5 +1,6 @@
 import FeedbackModel from "../models/feedbackModel.js";
 import validator from "validator";
+import { geminiIntegration } from "../services/geminiServices.js";
 
 export const addFeedback = async (req, res) => {
   try {
@@ -18,12 +19,26 @@ export const addFeedback = async (req, res) => {
       });
     }
 
+    //Gemini integration
+    let geminiAnalysis = {};
+    try {
+      geminiAnalysis = await geminiIntegration(title, description);
+    } catch (error) {
+      console.log("Gemini analysis Error!:");
+    }
+
     await FeedbackModel.create({
       title,
       description,
       category,
       submitterName,
       submitterEmail,
+      ai_category: geminiAnalysis.category || null,
+      ai_sentiment: geminiAnalysis.sentiment || null,
+      ai_priority: geminiAnalysis.priority_score || null,
+      ai_summary: geminiAnalysis.summary || null,
+      ai_tags: geminiAnalysis.tags || [],
+      ai_processed: Object.keys(geminiAnalysis).length > 0,
     });
 
     return res.status(201).json({
