@@ -12,7 +12,8 @@ export const addFeedback = async (req, res) => {
         message: "Please provide all required fields!",
       });
     }
-    if (!validator.isEmail(submitterEmail)) {
+    
+    if (submitterEmail && !validator.isEmail(submitterEmail)) {
       return res.status(400).json({
         success: false,
         message: "Please enter a valid email!",
