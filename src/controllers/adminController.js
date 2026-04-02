@@ -24,7 +24,7 @@ export const adminLogin = async (req, res) => {
       });
     }
 
-    // Generate and return JWT token
+    // Generate and send JWT token to frontend
     const token = createToken(email);
     return res.status(200).json({
       success: true,
