@@ -59,7 +59,7 @@ export const getAllFeedback = async (req, res) => {
   try {
     const allFeedback = await FeedbackModel.find();
     if (!allFeedback || allFeedback.length === 0) {
-      return res.status(204).json({
+      return res.status(200).json({
         success: false,
         message: "Database is empty!",
       });
