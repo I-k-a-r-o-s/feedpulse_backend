@@ -33,5 +33,6 @@ export const geminiIntegration = async (title, description) => {
     return analysis;
   } catch (error) {
     console.error("Gemini Integration Error!:", error);
+    return {};
   }
 };
