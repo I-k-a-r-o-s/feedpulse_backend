@@ -6,7 +6,7 @@ Node.js Express backend server for FeedPulse feedback management system with Mon
 
 - RESTful API endpoints for feedback submission and admin operations
 - JWT-based authentication for admin routes
-- MongoDB integration with Mongoose ODM
+- MongoDB integration with Mongoose
 - Google Gemini API integration for AI-powered feedback analysis
 - CORS support for frontend communication
 - Input validation and error handling
